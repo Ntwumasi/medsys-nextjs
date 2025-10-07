@@ -78,11 +78,11 @@ export default function DashboardPage() {
             Welcome, {user?.firstName}!
           </h2>
           <p className="mt-2 text-gray-600">
-            {new Date().toLocaleDateString(&apos;en-US&apos;, {
-              weekday: &apos;long&apos;,
-              year: &apos;numeric&apos;,
-              month: &apos;long&apos;,
-              day: &apos;numeric&apos;
+            {new Date().toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
             })}
           </p>
         </div>

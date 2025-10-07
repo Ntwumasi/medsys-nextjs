@@ -172,7 +172,7 @@ export default function DashboardPage() {
             <p className="mt-2 text-3xl font-bold text-gray-900">-</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
-            <p className="text-sm text-gray-600">Today's Appointments</p>
+            <p className="text-sm text-gray-600">Today&apos;s Appointments</p>
             <p className="mt-2 text-3xl font-bold text-gray-900">-</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">

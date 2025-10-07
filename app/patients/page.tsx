@@ -31,6 +31,7 @@ export default function PatientsPage() {
     }
 
     fetchPatients();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, search]);
 
   const fetchPatients = async () => {
@@ -48,8 +49,8 @@ export default function PatientsPage() {
 
       const data = await response.json();
       setPatients(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }

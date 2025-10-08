@@ -1,32 +1,11 @@
-import { createPool } from '@vercel/postgres';
+import { sql as vercelSql } from '@vercel/postgres';
 
-let pool: ReturnType<typeof createPool> | null = null;
-
-function getPool() {
-  if (!pool) {
-    pool = createPool({
-      connectionString: process.env.POSTGRES_PRISMA_URL || process.env.POSTGRES_URL,
-    });
-  }
-  return pool;
-}
-
-// Lazy getter for sql - only initializes when accessed at runtime
-export const sql = {
-  query: (...args: Parameters<ReturnType<typeof createPool>['sql']['query']>) => {
-    return getPool().sql.query(...args);
-  }
-} as ReturnType<typeof createPool>['sql'];
-
-// Add template literal support
-Object.assign(sql, new Proxy(() => {}, {
-  apply: (target, thisArg, args) => {
-    return getPool().sql(...args);
-  }
-}));
+// Re-export sql directly from @vercel/postgres
+// This avoids any initialization during build time
+export const sql = vercelSql;
 
 // Database helper functions
 export async function query(text: string, params?: unknown[]) {
-  const result = await getPool().query(text, params);
+  const result = await sql.query(text, params);
   return result;
 }

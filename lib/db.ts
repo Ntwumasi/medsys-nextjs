@@ -11,8 +11,19 @@ function getPool() {
   return pool;
 }
 
-// Export sql directly from pool
-export const sql = getPool().sql;
+// Lazy getter for sql - only initializes when accessed at runtime
+export const sql = {
+  query: (...args: Parameters<ReturnType<typeof createPool>['sql']['query']>) => {
+    return getPool().sql.query(...args);
+  }
+} as ReturnType<typeof createPool>['sql'];
+
+// Add template literal support
+Object.assign(sql, new Proxy(() => {}, {
+  apply: (target, thisArg, args) => {
+    return getPool().sql(...args);
+  }
+}));
 
 // Database helper functions
 export async function query(text: string, params?: unknown[]) {

@@ -1,7 +1,6 @@
-import { createPool, sql as vercelSql } from '@vercel/postgres';
-import type { VercelPool } from '@vercel/postgres';
+import { createPool } from '@vercel/postgres';
 
-let pool: VercelPool | null = null;
+let pool: ReturnType<typeof createPool> | null = null;
 
 function getPool() {
   if (!pool) {
@@ -12,12 +11,8 @@ function getPool() {
   return pool;
 }
 
-export const sql = new Proxy({} as typeof vercelSql, {
-  get(target, prop) {
-    const poolSql = getPool().sql;
-    return (poolSql as unknown as Record<string | symbol, unknown>)[prop];
-  }
-});
+// Export sql directly from pool
+export const sql = getPool().sql;
 
 // Database helper functions
 export async function query(text: string, params?: unknown[]) {

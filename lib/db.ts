@@ -14,7 +14,8 @@ function getPool() {
 
 export const sql = new Proxy({} as typeof vercelSql, {
   get(target, prop) {
-    return (getPool().sql as Record<string, unknown>)[prop];
+    const poolSql = getPool().sql;
+    return (poolSql as unknown as Record<string, unknown>)[prop];
   }
 });
 

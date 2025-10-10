@@ -25,6 +25,7 @@ export const sql = new Proxy({} as ReturnType<typeof createPool>['sql'], {
     return getPool().sql[prop as keyof ReturnType<typeof createPool>['sql']];
   },
   apply(target, thisArg, args: unknown[]) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     return (getPool().sql as Function)(...args);
   }
 });

@@ -116,12 +116,15 @@ export default function DashboardPage() {
             </div>
           </Link>
 
-          <div className="block p-6 bg-white rounded-lg shadow">
+          <Link
+            href="/appointments"
+            className="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition-shadow"
+          >
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">Appointments</h3>
                 <p className="mt-2 text-sm text-gray-600">
-                  Coming soon...
+                  Schedule and manage appointments
                 </p>
               </div>
               <svg
@@ -138,7 +141,7 @@ export default function DashboardPage() {
                 />
               </svg>
             </div>
-          </div>
+          </Link>
 
           <div className="block p-6 bg-white rounded-lg shadow">
             <div className="flex items-center justify-between">

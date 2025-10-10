@@ -60,6 +60,26 @@ export async function GET() {
     `;
     console.log('Patients table created');
 
+    // Create appointments table
+    console.log('Creating appointments table...');
+    await sql`
+      CREATE TABLE IF NOT EXISTS appointments (
+        id SERIAL PRIMARY KEY,
+        patient_id INTEGER REFERENCES patients(id) ON DELETE CASCADE,
+        doctor_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+        appointment_date TIMESTAMP NOT NULL,
+        duration_minutes INTEGER DEFAULT 30,
+        appointment_type VARCHAR(100),
+        status VARCHAR(50) DEFAULT 'scheduled',
+        reason TEXT,
+        notes TEXT,
+        reminder_sent BOOLEAN DEFAULT false,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log('Appointments table created');
+
     // Create admin user (password: admin123)
     const adminHash = '$2b$10$ANeTso1QCCLlsBt6V23bDe.1F1oKtqhEgCzkbE4grPDPlTgahaMfa';
 

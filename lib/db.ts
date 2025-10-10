@@ -5,7 +5,7 @@ let client: ReturnType<typeof createClient> | null = null;
 function getClient() {
   if (!client) {
     client = createClient({
-      connectionString: process.env.POSTGRES_PRISMA_URL || process.env.POSTGRES_URL,
+      connectionString: process.env.PRISMA_DATABASE_URL || process.env.POSTGRES_URL,
     });
   }
   return client;

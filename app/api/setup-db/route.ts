@@ -6,7 +6,7 @@ export const maxDuration = 60; // Set max duration to 60 seconds
 export async function GET() {
   try {
     console.log('Starting database setup...');
-    console.log('Connection string:', process.env.POSTGRES_PRISMA_URL ? 'PRISMA_URL present' : 'Using POSTGRES_URL');
+    console.log('Connection string:', process.env.PRISMA_DATABASE_URL ? 'Using PRISMA_DATABASE_URL (pooled)' : 'Using POSTGRES_URL (direct)');
 
     // Create users table
     console.log('Creating users table...');

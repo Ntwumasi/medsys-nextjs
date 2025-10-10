@@ -20,9 +20,9 @@ const getPool = (() => {
 })();
 
 // Export sql from the pool
-export const sql = new Proxy({} as any, {
+export const sql = new Proxy({} as ReturnType<typeof createPool>['sql'], {
   get(target, prop) {
-    return getPool().sql[prop as keyof typeof getPool.prototype.sql];
+    return getPool().sql[prop as keyof ReturnType<typeof createPool>['sql']];
   },
   apply(target, thisArg, args) {
     return getPool().sql(...args);

@@ -44,13 +44,13 @@ export async function GET() {
     console.log('Patients table created');
 
     // Create admin user (password: admin123)
-    const adminHash = '$2b$10$rQJ5P8qWqW8qWqW8qWqW8uO5xP3xP3xP3xP3xP3xP3xP3xP3xP3xP';
+    const adminHash = '$2b$10$ANeTso1QCCLlsBt6V23bDe.1F1oKtqhEgCzkbE4grPDPlTgahaMfa';
 
     console.log('Creating admin user...');
     await sql`
       INSERT INTO users (email, password_hash, role, first_name, last_name)
       VALUES ('admin@medsys.com', ${adminHash}, 'admin', 'Admin', 'User')
-      ON CONFLICT (email) DO NOTHING
+      ON CONFLICT (email) DO UPDATE SET password_hash = ${adminHash}
     `;
     console.log('Admin user created');
 

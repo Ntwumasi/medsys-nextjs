@@ -87,7 +87,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { firstName, lastName, dateOfBirth, gender, phone, email } = await request.json();
+    const {
+      firstName,
+      lastName,
+      dateOfBirth,
+      gender,
+      phone,
+      email,
+      address,
+      city,
+      state,
+      postalCode,
+      country,
+      emergencyContactName,
+      emergencyContactPhone,
+      emergencyContactRelationship,
+      bloodType,
+      allergies,
+      chronicConditions,
+      currentMedications,
+      insuranceProvider,
+      insurancePolicyNumber,
+      occupation,
+      maritalStatus
+    } = await request.json();
 
     if (!firstName || !lastName || !dateOfBirth || !gender) {
       return NextResponse.json(
@@ -108,7 +131,23 @@ export async function POST(request: NextRequest) {
         date_of_birth,
         gender,
         phone,
-        email
+        email,
+        address,
+        city,
+        state,
+        postal_code,
+        country,
+        emergency_contact_name,
+        emergency_contact_phone,
+        emergency_contact_relationship,
+        blood_type,
+        allergies,
+        chronic_conditions,
+        current_medications,
+        insurance_provider,
+        insurance_policy_number,
+        occupation,
+        marital_status
       )
       VALUES (
         ${patientNumber},
@@ -117,7 +156,23 @@ export async function POST(request: NextRequest) {
         ${dateOfBirth},
         ${gender},
         ${phone || null},
-        ${email || null}
+        ${email || null},
+        ${address || null},
+        ${city || null},
+        ${state || null},
+        ${postalCode || null},
+        ${country || null},
+        ${emergencyContactName || null},
+        ${emergencyContactPhone || null},
+        ${emergencyContactRelationship || null},
+        ${bloodType || null},
+        ${allergies || null},
+        ${chronicConditions || null},
+        ${currentMedications || null},
+        ${insuranceProvider || null},
+        ${insurancePolicyNumber || null},
+        ${occupation || null},
+        ${maritalStatus || null}
       )
       RETURNING *
     `;

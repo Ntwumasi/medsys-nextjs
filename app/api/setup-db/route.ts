@@ -38,7 +38,24 @@ export async function GET() {
         gender VARCHAR(20) NOT NULL,
         phone VARCHAR(20),
         email VARCHAR(255),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        address TEXT,
+        city VARCHAR(100),
+        state VARCHAR(100),
+        postal_code VARCHAR(20),
+        country VARCHAR(100),
+        emergency_contact_name VARCHAR(200),
+        emergency_contact_phone VARCHAR(20),
+        emergency_contact_relationship VARCHAR(50),
+        blood_type VARCHAR(10),
+        allergies TEXT,
+        chronic_conditions TEXT,
+        current_medications TEXT,
+        insurance_provider VARCHAR(200),
+        insurance_policy_number VARCHAR(100),
+        occupation VARCHAR(100),
+        marital_status VARCHAR(20),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
     console.log('Patients table created');

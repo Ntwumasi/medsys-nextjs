@@ -94,12 +94,20 @@ export default function PatientsPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6 flex justify-between items-center">
           <h2 className="text-3xl font-bold text-gray-900">Patients</h2>
-          <Link
-            href="/dashboard"
-            className="text-blue-600 hover:text-blue-800 text-sm"
-          >
-            ← Back to Dashboard
-          </Link>
+          <div className="flex space-x-4">
+            <Link
+              href="/patients/new"
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              + New Patient
+            </Link>
+            <Link
+              href="/dashboard"
+              className="px-4 py-2 text-blue-600 hover:text-blue-800"
+            >
+              ← Dashboard
+            </Link>
+          </div>
         </div>
 
         {/* Search */}
@@ -151,7 +159,11 @@ export default function PatientsPage() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {patients.map((patient) => (
-                  <tr key={patient.id} className="hover:bg-gray-50">
+                  <tr
+                    key={patient.id}
+                    onClick={() => router.push(`/patients/${patient.id}`)}
+                    className="hover:bg-gray-50 cursor-pointer"
+                  >
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {patient.patient_number}
                     </td>

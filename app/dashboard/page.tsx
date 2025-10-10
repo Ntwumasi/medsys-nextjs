@@ -54,30 +54,35 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">MedSys EMR</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">
-              {user?.firstName} {user?.lastName} ({user?.role})
-            </span>
-            <button
-              onClick={handleLogout}
-              className="text-sm text-blue-600 hover:text-blue-800"
-            >
-              Logout
-            </button>
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+          <div className="flex justify-between items-center">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">MedSys EMR</h1>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <span className="text-xs sm:text-sm text-gray-600 hidden sm:inline">
+                {user?.firstName} {user?.lastName} ({user?.role})
+              </span>
+              <span className="text-xs text-gray-600 sm:hidden">
+                {user?.firstName}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="text-xs sm:text-sm text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded hover:bg-blue-50 transition"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
             Welcome, {user?.firstName}!
           </h2>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-1 sm:mt-2 text-sm sm:text-base text-gray-600">
             {new Date().toLocaleDateString('en-US', {
               weekday: 'long',
               year: 'numeric',
@@ -88,20 +93,20 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <Link
             href="/patients"
-            className="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition-shadow"
+            className="block p-4 sm:p-6 bg-white rounded-lg shadow hover:shadow-lg active:shadow-md transition-shadow touch-manipulation"
           >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Patients</h3>
-                <p className="mt-2 text-sm text-gray-600">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">Patients</h3>
+                <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600">
                   View and manage patient records
                 </p>
               </div>
               <svg
-                className="w-8 h-8 text-blue-500"
+                className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500 flex-shrink-0 ml-2"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -118,17 +123,17 @@ export default function DashboardPage() {
 
           <Link
             href="/appointments"
-            className="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition-shadow"
+            className="block p-4 sm:p-6 bg-white rounded-lg shadow hover:shadow-lg active:shadow-md transition-shadow touch-manipulation"
           >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Appointments</h3>
-                <p className="mt-2 text-sm text-gray-600">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">Appointments</h3>
+                <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600">
                   Schedule and manage appointments
                 </p>
               </div>
               <svg
-                className="w-8 h-8 text-green-500"
+                className="w-6 h-6 sm:w-8 sm:h-8 text-green-500 flex-shrink-0 ml-2"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -143,16 +148,16 @@ export default function DashboardPage() {
             </div>
           </Link>
 
-          <div className="block p-6 bg-white rounded-lg shadow">
+          <div className="block p-4 sm:p-6 bg-white rounded-lg shadow opacity-60">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Records</h3>
-                <p className="mt-2 text-sm text-gray-600">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">Records</h3>
+                <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600">
                   Coming soon...
                 </p>
               </div>
               <svg
-                className="w-8 h-8 text-purple-500"
+                className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500 flex-shrink-0 ml-2"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -169,18 +174,18 @@ export default function DashboardPage() {
         </div>
 
         {/* Stats */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <p className="text-sm text-gray-600">Total Patients</p>
-            <p className="mt-2 text-3xl font-bold text-gray-900">-</p>
+        <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+            <p className="text-xs sm:text-sm text-gray-600">Total Patients</p>
+            <p className="mt-1 sm:mt-2 text-2xl sm:text-3xl font-bold text-gray-900">-</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <p className="text-sm text-gray-600">Today&apos;s Appointments</p>
-            <p className="mt-2 text-3xl font-bold text-gray-900">-</p>
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+            <p className="text-xs sm:text-sm text-gray-600">Today&apos;s Appointments</p>
+            <p className="mt-1 sm:mt-2 text-2xl sm:text-3xl font-bold text-gray-900">-</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <p className="text-sm text-gray-600">Pending Tasks</p>
-            <p className="mt-2 text-3xl font-bold text-gray-900">-</p>
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+            <p className="text-xs sm:text-sm text-gray-600">Pending Tasks</p>
+            <p className="mt-1 sm:mt-2 text-2xl sm:text-3xl font-bold text-gray-900">-</p>
           </div>
         </div>
       </main>

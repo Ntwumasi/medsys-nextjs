@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sql } from '@/lib/db';
+import { sql, query } from '@/lib/db';
 import { verifyToken } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status');
 
     // Build query dynamically
-    let query = `
+    let sqlQuery = `
       SELECT
         a.*,
         p.first_name as patient_first_name,
@@ -48,32 +48,32 @@ export async function GET(request: NextRequest) {
     let paramIndex = 1;
 
     if (startDate) {
-      query += ` AND a.appointment_date >= $${paramIndex}`;
+      sqlQuery += ` AND a.appointment_date >= $${paramIndex}`;
       params.push(startDate);
       paramIndex++;
     }
 
     if (endDate) {
-      query += ` AND a.appointment_date <= $${paramIndex}`;
+      sqlQuery += ` AND a.appointment_date <= $${paramIndex}`;
       params.push(endDate);
       paramIndex++;
     }
 
     if (patientId) {
-      query += ` AND a.patient_id = $${paramIndex}`;
+      sqlQuery += ` AND a.patient_id = $${paramIndex}`;
       params.push(patientId);
       paramIndex++;
     }
 
     if (status) {
-      query += ` AND a.status = $${paramIndex}`;
+      sqlQuery += ` AND a.status = $${paramIndex}`;
       params.push(status);
       paramIndex++;
     }
 
-    query += ' ORDER BY a.appointment_date ASC';
+    sqlQuery += ' ORDER BY a.appointment_date ASC';
 
-    const result = await sql.query(query, params);
+    const result = await query(sqlQuery, params);
 
     return NextResponse.json(result.rows);
   } catch (error) {

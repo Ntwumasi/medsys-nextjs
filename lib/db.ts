@@ -1,7 +1,5 @@
 import type { VercelPool } from '@vercel/postgres';
 
-type SQLValue = string | number | boolean | null | undefined | Date | Buffer;
-
 let pool: VercelPool | undefined;
 
 async function getPool() {
@@ -15,7 +13,8 @@ async function getPool() {
 }
 
 // Export sql as async function wrapper
-export const sql = async (strings: TemplateStringsArray, ...values: SQLValue[]) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const sql = async (strings: TemplateStringsArray, ...values: any[]) => {
   const p = await getPool();
   return p.sql(strings, ...values);
 };

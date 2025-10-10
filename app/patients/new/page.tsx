@@ -71,9 +71,9 @@ export default function NewPatientPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-gray-50 p-4 text-gray-900">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-lg shadow p-6 text-gray-900">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold">New Patient Registration</h1>
             <button

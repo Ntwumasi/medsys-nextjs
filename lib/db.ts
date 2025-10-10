@@ -6,7 +6,7 @@ async function getPool() {
   if (!pool) {
     const { createPool } = await import('@vercel/postgres');
     pool = createPool({
-      connectionString: process.env.PRISMA_DATABASE_URL || process.env.DATABASE_URL,
+      connectionString: process.env.POSTGRES_PRISMA_URL,
     });
   }
   return pool;

@@ -1,9 +1,15 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 
+export const maxDuration = 60; // Set max duration to 60 seconds
+
 export async function GET() {
   try {
+    console.log('Starting database setup...');
+    console.log('Connection string:', process.env.POSTGRES_PRISMA_URL ? 'PRISMA_URL present' : 'Using POSTGRES_URL');
+
     // Create users table
+    console.log('Creating users table...');
     await sql`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -17,8 +23,10 @@ export async function GET() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
+    console.log('Users table created');
 
     // Create patients table
+    console.log('Creating patients table...');
     await sql`
       CREATE TABLE IF NOT EXISTS patients (
         id SERIAL PRIMARY KEY,
@@ -33,15 +41,18 @@ export async function GET() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
+    console.log('Patients table created');
 
     // Create admin user (password: admin123)
     const adminHash = '$2b$10$rQJ5P8qWqW8qWqW8qWqW8uO5xP3xP3xP3xP3xP3xP3xP3xP3xP3xP';
 
+    console.log('Creating admin user...');
     await sql`
       INSERT INTO users (email, password_hash, role, first_name, last_name)
       VALUES ('admin@medsys.com', ${adminHash}, 'admin', 'Admin', 'User')
       ON CONFLICT (email) DO NOTHING
     `;
+    console.log('Admin user created');
 
     return NextResponse.json({
       success: true,
@@ -50,7 +61,11 @@ export async function GET() {
   } catch (error) {
     console.error('Database setup error:', error);
     return NextResponse.json(
-      { success: false, error: String(error) },
+      {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      },
       { status: 500 }
     );
   }

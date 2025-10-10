@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { sql } from '@/lib/db';
+import { query } from '@/lib/db';
 
 export const maxDuration = 60;
 
@@ -32,7 +32,7 @@ export async function GET() {
       const columnName = column.split(' ')[0];
       const columnDef = column.substring(columnName.length + 1);
       try {
-        await sql.query(
+        await query(
           `ALTER TABLE patients ADD COLUMN IF NOT EXISTS ${columnName} ${columnDef}`
         );
         console.log(`Added column: ${columnName}`);

@@ -1,4 +1,6 @@
-import type { VercelPool, Primitive } from '@vercel/postgres';
+import type { VercelPool } from '@vercel/postgres';
+
+type SQLValue = string | number | boolean | null | undefined | Date | Buffer;
 
 let pool: VercelPool | undefined;
 
@@ -13,7 +15,7 @@ async function getPool() {
 }
 
 // Export sql as async function wrapper
-export const sql = async (strings: TemplateStringsArray, ...values: Primitive[]) => {
+export const sql = async (strings: TemplateStringsArray, ...values: SQLValue[]) => {
   const p = await getPool();
   return p.sql(strings, ...values);
 };

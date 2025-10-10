@@ -1,23 +1,10 @@
-import { createClient } from '@vercel/postgres';
+import { sql as vercelSql } from '@vercel/postgres';
 
-let client: ReturnType<typeof createClient> | null = null;
-
-function getClient() {
-  if (!client) {
-    client = createClient({
-      connectionString: process.env.PRISMA_DATABASE_URL || process.env.POSTGRES_URL,
-    });
-  }
-  return client;
-}
-
-// Export sql as a tagged template function
-export const sql = (...args: Parameters<ReturnType<typeof createClient>['sql']>) => {
-  return getClient().sql(...args);
-};
+// Export sql directly - @vercel/postgres handles pooling internally
+export const sql = vercelSql;
 
 // Database helper functions
 export async function query(text: string, params?: unknown[]) {
-  const result = await getClient().query(text, params);
+  const result = await sql.query(text, params);
   return result;
 }

@@ -11,6 +11,10 @@ import {
   PlusIcon,
   ArrowLeftIcon
 } from '@heroicons/react/24/outline';
+import VitalSignsTab from './components/VitalSignsTab';
+import AllergiesTab from './components/AllergiesTab';
+import PrescriptionsTab from './components/PrescriptionsTab';
+import EncountersTab from './components/EncountersTab';
 
 interface Patient {
   id: number;
@@ -231,11 +235,19 @@ export default function PatientChartPage() {
           </div>
         )}
 
-        {activeTab !== 'overview' && (
+        {activeTab === 'vitals' && <VitalSignsTab patientId={patientId} />}
+
+        {activeTab === 'encounters' && <EncountersTab patientId={patientId} />}
+
+        {activeTab === 'allergies' && <AllergiesTab patientId={patientId} />}
+
+        {activeTab === 'medications' && <PrescriptionsTab patientId={patientId} />}
+
+        {(activeTab === 'history' || activeTab === 'diagnoses') && (
           <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
             <div className="text-center py-12">
               <p className="text-gray-600 mb-4">
-                {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} module coming up next...
+                {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} module coming soon...
               </p>
               <p className="text-sm text-gray-500">
                 This section will display and manage {activeTab} data

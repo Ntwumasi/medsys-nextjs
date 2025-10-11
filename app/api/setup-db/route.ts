@@ -291,6 +291,130 @@ export async function GET() {
     `;
     console.log('Orders table created');
 
+    // Create CPT codes table (procedure codes)
+    console.log('Creating cpt_codes table...');
+    await sql`
+      CREATE TABLE IF NOT EXISTS cpt_codes (
+        id SERIAL PRIMARY KEY,
+        code VARCHAR(10) UNIQUE NOT NULL,
+        description TEXT NOT NULL,
+        category VARCHAR(100),
+        base_price DECIMAL(10,2),
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log('CPT codes table created');
+
+    // Create ICD-10 codes table (diagnosis codes)
+    console.log('Creating icd10_codes table...');
+    await sql`
+      CREATE TABLE IF NOT EXISTS icd10_codes (
+        id SERIAL PRIMARY KEY,
+        code VARCHAR(10) UNIQUE NOT NULL,
+        description TEXT NOT NULL,
+        category VARCHAR(100),
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log('ICD-10 codes table created');
+
+    // Create invoices table
+    console.log('Creating invoices table...');
+    await sql`
+      CREATE TABLE IF NOT EXISTS invoices (
+        id SERIAL PRIMARY KEY,
+        invoice_number VARCHAR(50) UNIQUE NOT NULL,
+        patient_id INTEGER REFERENCES patients(id) ON DELETE CASCADE,
+        encounter_id INTEGER REFERENCES encounters(id) ON DELETE SET NULL,
+        invoice_date DATE NOT NULL DEFAULT CURRENT_DATE,
+        due_date DATE,
+        subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
+        tax_amount DECIMAL(10,2) DEFAULT 0,
+        discount_amount DECIMAL(10,2) DEFAULT 0,
+        total_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+        amount_paid DECIMAL(10,2) DEFAULT 0,
+        balance DECIMAL(10,2) NOT NULL DEFAULT 0,
+        status VARCHAR(50) DEFAULT 'pending',
+        payment_method VARCHAR(50),
+        notes TEXT,
+        created_by INTEGER REFERENCES users(id),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log('Invoices table created');
+
+    // Create invoice_items table (line items)
+    console.log('Creating invoice_items table...');
+    await sql`
+      CREATE TABLE IF NOT EXISTS invoice_items (
+        id SERIAL PRIMARY KEY,
+        invoice_id INTEGER REFERENCES invoices(id) ON DELETE CASCADE,
+        cpt_code_id INTEGER REFERENCES cpt_codes(id),
+        description TEXT NOT NULL,
+        quantity INTEGER DEFAULT 1,
+        unit_price DECIMAL(10,2) NOT NULL,
+        total_price DECIMAL(10,2) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log('Invoice items table created');
+
+    // Create payments table
+    console.log('Creating payments table...');
+    await sql`
+      CREATE TABLE IF NOT EXISTS payments (
+        id SERIAL PRIMARY KEY,
+        payment_number VARCHAR(50) UNIQUE NOT NULL,
+        invoice_id INTEGER REFERENCES invoices(id) ON DELETE CASCADE,
+        patient_id INTEGER REFERENCES patients(id) ON DELETE CASCADE,
+        payment_date DATE NOT NULL DEFAULT CURRENT_DATE,
+        amount DECIMAL(10,2) NOT NULL,
+        payment_method VARCHAR(50) NOT NULL,
+        reference_number VARCHAR(100),
+        notes TEXT,
+        processed_by INTEGER REFERENCES users(id),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log('Payments table created');
+
+    // Create insurance_claims table
+    console.log('Creating insurance_claims table...');
+    await sql`
+      CREATE TABLE IF NOT EXISTS insurance_claims (
+        id SERIAL PRIMARY KEY,
+        claim_number VARCHAR(50) UNIQUE NOT NULL,
+        patient_id INTEGER REFERENCES patients(id) ON DELETE CASCADE,
+        encounter_id INTEGER REFERENCES encounters(id) ON DELETE SET NULL,
+        invoice_id INTEGER REFERENCES invoices(id) ON DELETE SET NULL,
+        insurance_company VARCHAR(200) NOT NULL,
+        policy_number VARCHAR(100) NOT NULL,
+        group_number VARCHAR(100),
+        subscriber_name VARCHAR(200),
+        subscriber_relationship VARCHAR(50),
+        claim_date DATE NOT NULL DEFAULT CURRENT_DATE,
+        service_date DATE NOT NULL,
+        diagnosis_codes TEXT[],
+        procedure_codes TEXT[],
+        total_charged DECIMAL(10,2) NOT NULL,
+        amount_approved DECIMAL(10,2),
+        amount_paid DECIMAL(10,2),
+        patient_responsibility DECIMAL(10,2),
+        status VARCHAR(50) DEFAULT 'submitted',
+        submission_date DATE,
+        response_date DATE,
+        denial_reason TEXT,
+        notes TEXT,
+        created_by INTEGER REFERENCES users(id),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log('Insurance claims table created');
+
     // Add foreign key to vital_signs for encounter_id
     console.log('Adding foreign key constraints...');
     await sql`
@@ -303,6 +427,44 @@ export async function GET() {
       FOREIGN KEY (encounter_id) REFERENCES encounters(id) ON DELETE SET NULL
     `;
     console.log('Foreign key constraints added');
+
+    // Insert sample CPT codes
+    console.log('Inserting sample CPT codes...');
+    await sql`
+      INSERT INTO cpt_codes (code, description, category, base_price)
+      VALUES
+        ('99213', 'Office Visit - Established Patient, Level 3', 'Evaluation & Management', 150.00),
+        ('99214', 'Office Visit - Established Patient, Level 4', 'Evaluation & Management', 200.00),
+        ('99203', 'Office Visit - New Patient, Level 3', 'Evaluation & Management', 175.00),
+        ('99204', 'Office Visit - New Patient, Level 4', 'Evaluation & Management', 250.00),
+        ('80053', 'Comprehensive Metabolic Panel', 'Laboratory', 45.00),
+        ('85025', 'Complete Blood Count (CBC)', 'Laboratory', 35.00),
+        ('93000', 'Electrocardiogram (EKG)', 'Diagnostic', 75.00),
+        ('71046', 'Chest X-Ray', 'Radiology', 120.00),
+        ('90471', 'Immunization Administration', 'Preventive', 25.00),
+        ('90834', 'Psychotherapy - 45 minutes', 'Mental Health', 180.00)
+      ON CONFLICT (code) DO NOTHING
+    `;
+    console.log('Sample CPT codes inserted');
+
+    // Insert sample ICD-10 codes
+    console.log('Inserting sample ICD-10 codes...');
+    await sql`
+      INSERT INTO icd10_codes (code, description, category)
+      VALUES
+        ('I10', 'Essential (primary) hypertension', 'Cardiovascular'),
+        ('E11.9', 'Type 2 diabetes mellitus without complications', 'Endocrine'),
+        ('J06.9', 'Acute upper respiratory infection, unspecified', 'Respiratory'),
+        ('M79.3', 'Panniculitis, unspecified', 'Musculoskeletal'),
+        ('K21.9', 'Gastro-esophageal reflux disease without esophagitis', 'Digestive'),
+        ('F41.1', 'Generalized anxiety disorder', 'Mental Health'),
+        ('R51', 'Headache', 'Symptoms'),
+        ('Z00.00', 'Encounter for general adult medical examination without abnormal findings', 'Preventive'),
+        ('E78.5', 'Hyperlipidemia, unspecified', 'Endocrine'),
+        ('M25.50', 'Pain in unspecified joint', 'Musculoskeletal')
+      ON CONFLICT (code) DO NOTHING
+    `;
+    console.log('Sample ICD-10 codes inserted');
 
     // Create admin user (password: admin123)
     const adminHash = '$2b$10$ANeTso1QCCLlsBt6V23bDe.1F1oKtqhEgCzkbE4grPDPlTgahaMfa';

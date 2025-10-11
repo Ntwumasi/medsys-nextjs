@@ -9,12 +9,14 @@ import {
   BeakerIcon,
   ClipboardDocumentListIcon,
   PlusIcon,
-  ArrowLeftIcon
+  ArrowLeftIcon,
+  CurrencyDollarIcon
 } from '@heroicons/react/24/outline';
 import VitalSignsTab from './components/VitalSignsTab';
 import AllergiesTab from './components/AllergiesTab';
 import PrescriptionsTab from './components/PrescriptionsTab';
 import EncountersTab from './components/EncountersTab';
+import BillingTab from './components/BillingTab';
 
 interface Patient {
   id: number;
@@ -27,7 +29,7 @@ interface Patient {
   email: string;
 }
 
-type Tab = 'overview' | 'vitals' | 'encounters' | 'allergies' | 'medications' | 'history' | 'diagnoses';
+type Tab = 'overview' | 'vitals' | 'encounters' | 'allergies' | 'medications' | 'billing' | 'history' | 'diagnoses';
 
 export default function PatientChartPage() {
   const router = useRouter();
@@ -107,6 +109,7 @@ export default function PatientChartPage() {
     { id: 'encounters', name: 'Encounters', icon: DocumentTextIcon },
     { id: 'allergies', name: 'Allergies', icon: BeakerIcon },
     { id: 'medications', name: 'Medications', icon: BeakerIcon },
+    { id: 'billing', name: 'Billing', icon: CurrencyDollarIcon },
     { id: 'history', name: 'History', icon: ClipboardDocumentListIcon },
     { id: 'diagnoses', name: 'Diagnoses', icon: ClipboardDocumentListIcon },
   ];
@@ -242,6 +245,8 @@ export default function PatientChartPage() {
         {activeTab === 'allergies' && <AllergiesTab patientId={patientId} />}
 
         {activeTab === 'medications' && <PrescriptionsTab patientId={patientId} />}
+
+        {activeTab === 'billing' && <BillingTab patientId={patientId} />}
 
         {(activeTab === 'history' || activeTab === 'diagnoses') && (
           <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">

@@ -333,7 +333,7 @@ export default function VitalSignsTab({ patientId }: VitalSignsTabProps) {
         {vitals.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
             <p className="text-gray-600 mb-2">No vital signs recorded yet</p>
-            <p className="text-sm text-gray-500">Click "Record Vitals" to add the first entry</p>
+            <p className="text-sm text-gray-500">Click &quot;Record Vitals&quot; to add the first entry</p>
           </div>
         ) : (
           vitals.map((vital) => (

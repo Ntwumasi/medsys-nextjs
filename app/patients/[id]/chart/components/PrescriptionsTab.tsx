@@ -326,7 +326,7 @@ export default function PrescriptionsTab({ patientId }: PrescriptionsTabProps) {
         {prescriptions.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
             <p className="text-gray-600 mb-2">No prescriptions on file</p>
-            <p className="text-sm text-gray-500">Click "New Prescription" to write the first prescription</p>
+            <p className="text-sm text-gray-500">Click &quot;New Prescription&quot; to write the first prescription</p>
           </div>
         ) : (
           prescriptions.map((rx) => (

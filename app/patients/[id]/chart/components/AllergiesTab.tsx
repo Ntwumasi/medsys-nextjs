@@ -242,7 +242,7 @@ export default function AllergiesTab({ patientId }: AllergiesTabProps) {
           <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
             <ExclamationTriangleIcon className="w-12 h-12 text-gray-400 mx-auto mb-3" />
             <p className="text-gray-600 mb-2">No allergies documented</p>
-            <p className="text-sm text-gray-500">Click "Add Allergy" if patient has known allergies</p>
+            <p className="text-sm text-gray-500">Click &quot;Add Allergy&quot; if patient has known allergies</p>
           </div>
         ) : (
           allergies.map((allergy) => (

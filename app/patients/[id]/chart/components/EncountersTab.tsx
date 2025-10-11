@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { PlusIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
-import { useRouter } from 'next/navigation';
 
 interface Encounter {
   id: number;
@@ -20,7 +19,6 @@ interface EncountersTabProps {
 }
 
 export default function EncountersTab({ patientId }: EncountersTabProps) {
-  const router = useRouter();
   const [encounters, setEncounters] = useState<Encounter[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -93,7 +91,7 @@ export default function EncountersTab({ patientId }: EncountersTabProps) {
           <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
             <DocumentTextIcon className="w-12 h-12 text-gray-400 mx-auto mb-3" />
             <p className="text-gray-600 mb-2">No clinical encounters documented</p>
-            <p className="text-sm text-gray-500">Click "New Encounter" to document a patient visit</p>
+            <p className="text-sm text-gray-500">Click &quot;New Encounter&quot; to document a patient visit</p>
           </div>
         ) : (
           encounters.map((encounter) => (

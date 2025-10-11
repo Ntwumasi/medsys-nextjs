@@ -127,12 +127,20 @@ export default function PatientDetailPage() {
             </h1>
             <p className="text-gray-600">Patient #{patient.patient_number}</p>
           </div>
-          <Link
-            href="/patients"
-            className="px-4 py-2 text-blue-600 hover:text-blue-800"
-          >
-            ← Back to Patients
-          </Link>
+          <div className="flex gap-3">
+            <Link
+              href={`/patients/${patient.id}/chart`}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+            >
+              📋 Medical Chart
+            </Link>
+            <Link
+              href="/patients"
+              className="px-4 py-2 text-blue-600 hover:text-blue-800"
+            >
+              ← Back to Patients
+            </Link>
+          </div>
         </div>
 
         {/* Patient Summary Cards */}

@@ -415,6 +415,144 @@ export async function GET() {
     `;
     console.log('Insurance claims table created');
 
+    // Create lab_test_catalog table
+    console.log('Creating lab_test_catalog table...');
+    await sql`
+      CREATE TABLE IF NOT EXISTS lab_test_catalog (
+        id SERIAL PRIMARY KEY,
+        test_code VARCHAR(20) UNIQUE NOT NULL,
+        test_name VARCHAR(200) NOT NULL,
+        category VARCHAR(100),
+        specimen_type VARCHAR(100),
+        normal_range_min DECIMAL(10,2),
+        normal_range_max DECIMAL(10,2),
+        unit VARCHAR(50),
+        turnaround_time VARCHAR(50),
+        cpt_code_id INTEGER REFERENCES cpt_codes(id),
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log('Lab test catalog table created');
+
+    // Create lab_orders table
+    console.log('Creating lab_orders table...');
+    await sql`
+      CREATE TABLE IF NOT EXISTS lab_orders (
+        id SERIAL PRIMARY KEY,
+        order_number VARCHAR(50) UNIQUE NOT NULL,
+        patient_id INTEGER REFERENCES patients(id) ON DELETE CASCADE,
+        encounter_id INTEGER REFERENCES encounters(id) ON DELETE SET NULL,
+        ordering_provider_id INTEGER REFERENCES users(id),
+        test_id INTEGER REFERENCES lab_test_catalog(id),
+        priority VARCHAR(20) DEFAULT 'routine',
+        clinical_indication TEXT,
+        special_instructions TEXT,
+        status VARCHAR(50) DEFAULT 'ordered',
+        ordered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        collected_at TIMESTAMP,
+        received_at TIMESTAMP,
+        completed_at TIMESTAMP,
+        notes TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log('Lab orders table created');
+
+    // Create lab_results table
+    console.log('Creating lab_results table...');
+    await sql`
+      CREATE TABLE IF NOT EXISTS lab_results (
+        id SERIAL PRIMARY KEY,
+        lab_order_id INTEGER REFERENCES lab_orders(id) ON DELETE CASCADE,
+        test_id INTEGER REFERENCES lab_test_catalog(id),
+        result_value VARCHAR(200),
+        result_numeric DECIMAL(10,2),
+        unit VARCHAR(50),
+        reference_range VARCHAR(100),
+        is_abnormal BOOLEAN DEFAULT false,
+        abnormal_flag VARCHAR(20),
+        result_status VARCHAR(50) DEFAULT 'final',
+        result_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        performed_by VARCHAR(200),
+        verified_by INTEGER REFERENCES users(id),
+        verified_at TIMESTAMP,
+        comments TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log('Lab results table created');
+
+    // Create imaging_study_catalog table
+    console.log('Creating imaging_study_catalog table...');
+    await sql`
+      CREATE TABLE IF NOT EXISTS imaging_study_catalog (
+        id SERIAL PRIMARY KEY,
+        study_code VARCHAR(20) UNIQUE NOT NULL,
+        study_name VARCHAR(200) NOT NULL,
+        modality VARCHAR(50),
+        body_part VARCHAR(100),
+        category VARCHAR(100),
+        contrast_required BOOLEAN DEFAULT false,
+        preparation_instructions TEXT,
+        typical_duration VARCHAR(50),
+        cpt_code_id INTEGER REFERENCES cpt_codes(id),
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log('Imaging study catalog table created');
+
+    // Create imaging_orders table
+    console.log('Creating imaging_orders table...');
+    await sql`
+      CREATE TABLE IF NOT EXISTS imaging_orders (
+        id SERIAL PRIMARY KEY,
+        order_number VARCHAR(50) UNIQUE NOT NULL,
+        patient_id INTEGER REFERENCES patients(id) ON DELETE CASCADE,
+        encounter_id INTEGER REFERENCES encounters(id) ON DELETE SET NULL,
+        ordering_provider_id INTEGER REFERENCES users(id),
+        study_id INTEGER REFERENCES imaging_study_catalog(id),
+        priority VARCHAR(20) DEFAULT 'routine',
+        clinical_indication TEXT NOT NULL,
+        clinical_history TEXT,
+        special_instructions TEXT,
+        contrast_used BOOLEAN DEFAULT false,
+        status VARCHAR(50) DEFAULT 'ordered',
+        ordered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        scheduled_at TIMESTAMP,
+        performed_at TIMESTAMP,
+        completed_at TIMESTAMP,
+        notes TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log('Imaging orders table created');
+
+    // Create imaging_results table
+    console.log('Creating imaging_results table...');
+    await sql`
+      CREATE TABLE IF NOT EXISTS imaging_results (
+        id SERIAL PRIMARY KEY,
+        imaging_order_id INTEGER REFERENCES imaging_orders(id) ON DELETE CASCADE,
+        study_id INTEGER REFERENCES imaging_study_catalog(id),
+        findings TEXT,
+        impression TEXT,
+        recommendations TEXT,
+        radiologist_name VARCHAR(200),
+        result_status VARCHAR(50) DEFAULT 'preliminary',
+        result_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        images_url TEXT,
+        verified_by INTEGER REFERENCES users(id),
+        verified_at TIMESTAMP,
+        critical_result BOOLEAN DEFAULT false,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log('Imaging results table created');
+
     // Add foreign key to vital_signs for encounter_id
     console.log('Adding foreign key constraints...');
     await sql`
@@ -465,6 +603,44 @@ export async function GET() {
       ON CONFLICT (code) DO NOTHING
     `;
     console.log('Sample ICD-10 codes inserted');
+
+    // Insert sample lab tests
+    console.log('Inserting sample lab tests...');
+    await sql`
+      INSERT INTO lab_test_catalog (test_code, test_name, category, specimen_type, normal_range_min, normal_range_max, unit, turnaround_time)
+      VALUES
+        ('CBC', 'Complete Blood Count', 'Hematology', 'Whole Blood', NULL, NULL, 'cells/mcL', '2-4 hours'),
+        ('CMP', 'Comprehensive Metabolic Panel', 'Chemistry', 'Serum', NULL, NULL, 'mg/dL', '4-6 hours'),
+        ('LIPID', 'Lipid Panel', 'Chemistry', 'Serum', NULL, NULL, 'mg/dL', '4-6 hours'),
+        ('TSH', 'Thyroid Stimulating Hormone', 'Endocrinology', 'Serum', 0.4, 4.0, 'mIU/L', '24 hours'),
+        ('HbA1c', 'Hemoglobin A1C', 'Chemistry', 'Whole Blood', 4.0, 5.6, '%', '2-4 hours'),
+        ('URINE', 'Urinalysis', 'Urinalysis', 'Urine', NULL, NULL, NULL, '1-2 hours'),
+        ('PT-INR', 'Prothrombin Time/INR', 'Coagulation', 'Plasma', 0.8, 1.2, 'ratio', '2-4 hours'),
+        ('BMP', 'Basic Metabolic Panel', 'Chemistry', 'Serum', NULL, NULL, 'mEq/L', '4-6 hours'),
+        ('LFT', 'Liver Function Tests', 'Chemistry', 'Serum', NULL, NULL, 'U/L', '4-6 hours'),
+        ('PSA', 'Prostate-Specific Antigen', 'Tumor Markers', 'Serum', 0, 4.0, 'ng/mL', '24 hours')
+      ON CONFLICT (test_code) DO NOTHING
+    `;
+    console.log('Sample lab tests inserted');
+
+    // Insert sample imaging studies
+    console.log('Inserting sample imaging studies...');
+    await sql`
+      INSERT INTO imaging_study_catalog (study_code, study_name, modality, body_part, category, contrast_required, typical_duration)
+      VALUES
+        ('XR-CHEST', 'Chest X-Ray', 'X-Ray', 'Chest', 'Radiology', false, '15 min'),
+        ('CT-HEAD', 'CT Head without Contrast', 'CT', 'Head', 'Radiology', false, '30 min'),
+        ('CT-ABD', 'CT Abdomen/Pelvis with Contrast', 'CT', 'Abdomen/Pelvis', 'Radiology', true, '45 min'),
+        ('MRI-BRAIN', 'MRI Brain with and without Contrast', 'MRI', 'Brain', 'Radiology', true, '60 min'),
+        ('US-ABD', 'Abdominal Ultrasound', 'Ultrasound', 'Abdomen', 'Radiology', false, '30 min'),
+        ('ECHO', 'Echocardiogram', 'Ultrasound', 'Heart', 'Cardiology', false, '45 min'),
+        ('MAMMO', 'Screening Mammogram', 'Mammography', 'Breast', 'Radiology', false, '30 min'),
+        ('XR-SPINE', 'Spine X-Ray', 'X-Ray', 'Spine', 'Radiology', false, '20 min'),
+        ('MRI-SPINE', 'MRI Lumbar Spine', 'MRI', 'Spine', 'Radiology', false, '45 min'),
+        ('DEXA', 'DEXA Bone Density Scan', 'DEXA', 'Skeletal', 'Radiology', false, '20 min')
+      ON CONFLICT (study_code) DO NOTHING
+    `;
+    console.log('Sample imaging studies inserted');
 
     // Create admin user (password: admin123)
     const adminHash = '$2b$10$ANeTso1QCCLlsBt6V23bDe.1F1oKtqhEgCzkbE4grPDPlTgahaMfa';
